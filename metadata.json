@@ -1,0 +1,6 @@
+{
+  "name": "E-Commerce Store",
+  "description": "A basic e-commerce storefront supporting product listings, cart, checkout, and authentication.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
