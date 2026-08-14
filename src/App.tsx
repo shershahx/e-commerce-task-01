@@ -14,6 +14,10 @@ import { Cart } from './pages/Cart';
 import { Checkout } from './pages/Checkout';
 import { Auth } from './pages/Auth';
 import { Profile } from './pages/Profile';
+import { Collections } from './pages/Collections';
+import { NewArrivals } from './pages/NewArrivals';
+import { Journal } from './pages/Journal';
+import { Story } from './pages/Story';
 import { Footer } from './components/Footer';
 
 export default function App() {
@@ -31,6 +35,10 @@ export default function App() {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/collections" element={<Collections />} />
+                <Route path="/new-arrivals" element={<NewArrivals />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/story" element={<Story />} />
               </Routes>
             </main>
             <Footer />

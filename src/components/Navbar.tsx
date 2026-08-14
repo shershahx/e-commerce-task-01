@@ -19,9 +19,9 @@ export function Navbar() {
           
           <div className="hidden md:flex items-center space-x-8 text-sm font-bold text-slate-500">
             <Link to="/" className="text-slate-900 border-b-2 border-indigo-600 pb-1">Shop</Link>
-            <Link to="/" className="hover:text-slate-900 transition-colors">Collections</Link>
-            <Link to="/" className="hover:text-slate-900 transition-colors">New Arrivals</Link>
-            <Link to="/" className="hover:text-slate-900 transition-colors">Journal</Link>
+            <Link to="/collections" className="hover:text-slate-900 transition-colors">Collections</Link>
+            <Link to="/new-arrivals" className="hover:text-slate-900 transition-colors">New Arrivals</Link>
+            <Link to="/journal" className="hover:text-slate-900 transition-colors">Journal</Link>
           </div>
           
           <div className="flex items-center space-x-6">

@@ -42,9 +42,9 @@ export function Home() {
               <a href="#shop" className="inline-flex justify-center items-center px-8 py-4 bg-white text-slate-900 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
                 Shop Collection
               </a>
-              <a href="#about" className="inline-flex justify-center items-center px-8 py-4 bg-slate-800/50 backdrop-blur text-white border border-slate-700 rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors">
+              <Link to="/story" className="inline-flex justify-center items-center px-8 py-4 bg-slate-800/50 backdrop-blur text-white border border-slate-700 rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors">
                 Explore Story
-              </a>
+              </Link>
             </div>
           </div>
         </div>
