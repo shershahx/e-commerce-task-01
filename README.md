@@ -57,7 +57,7 @@ server/              # Express backend
 - Handles idle client errors and exits process on fatal pool errors
 
 ### 3) Auth middleware (`server/middleware/auth.ts`)
-- `requireAuth`: requires `Authorization: ****** and rejects invalid/missing token with `401`
+- `requireAuth`: requires a valid bearer token in the request headers and rejects invalid/missing tokens with `401`
 - `optionalAuth`: reads token if present but does not block unauthenticated requests
 - Decoded JWT payload includes `userId`, attached to request as `req.userId`
 
