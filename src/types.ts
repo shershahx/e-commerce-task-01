@@ -14,16 +14,26 @@ export interface CartItem {
 }
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
 }
 
+export interface OrderItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 export interface Order {
   id: string;
-  userId: string | null;
-  items: CartItem[];
-  total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered';
+  subtotal: number;
+  shipping: number;
+  total: number;
+  email?: string;
   createdAt: string;
+  itemCount?: number;
+  items?: OrderItem[];
 }

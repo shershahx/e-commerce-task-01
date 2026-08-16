@@ -1,0 +1,51 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS products (
+  id VARCHAR(50) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price NUMERIC(10, 2) NOT NULL,
+  image_url TEXT,
+  category VARCHAR(100),
+  in_stock BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS cart_items (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  product_id VARCHAR(50) REFERENCES products(id) ON DELETE CASCADE,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  UNIQUE (user_id, product_id)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id VARCHAR(50) PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',
+  subtotal NUMERIC(10, 2) NOT NULL,
+  shipping NUMERIC(10, 2) NOT NULL DEFAULT 10.00,
+  total NUMERIC(10, 2) NOT NULL,
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  email VARCHAR(255),
+  address TEXT,
+  city VARCHAR(100),
+  zip VARCHAR(20),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id SERIAL PRIMARY KEY,
+  order_id VARCHAR(50) REFERENCES orders(id) ON DELETE CASCADE,
+  product_id VARCHAR(50),
+  product_name VARCHAR(255) NOT NULL,
+  price NUMERIC(10, 2) NOT NULL,
+  quantity INTEGER NOT NULL
+);

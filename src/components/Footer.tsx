@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Mail, Phone, MapPin, Facebook, Twitter, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -9,9 +9,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center space-x-2 text-indigo-600 font-black text-2xl tracking-tighter">
-              <Package className="w-6 h-6" />
-              <span>EQUIS.</span>
+            <Link to="/" className="flex items-center">
+              <img src="/logo.png" alt="SuperMart" className="h-9 w-auto" />
             </Link>
             <p className="text-slate-500 text-sm leading-relaxed">
               Curated essentials for the modern home. We believe in minimalist design, sustainable materials, and enduring quality.
@@ -61,7 +60,7 @@ export function Footer() {
               </li>
               <li className="flex items-center space-x-3 text-slate-500 text-sm">
                 <Mail className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                <span>hello@equis.shop</span>
+                <span>hello@supermart.shop</span>
               </li>
             </ul>
           </div>
@@ -69,7 +68,7 @@ export function Footer() {
 
         <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-slate-400 text-xs">
-            &copy; {new Date().getFullYear()} EQUIS. All rights reserved.
+            &copy; {new Date().getFullYear()} SuperMart. All rights reserved.
           </p>
           <div className="flex space-x-6 text-xs text-slate-400">
             <a href="#" className="hover:text-indigo-600 transition-colors">Privacy Policy</a>

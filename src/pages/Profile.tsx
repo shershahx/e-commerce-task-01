@@ -1,27 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Package, Settings, LogOut, Heart, MapPin, CreditCard } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Package, Settings, LogOut, Heart, MapPin, CreditCard, ChevronDown, ChevronUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { api } from '../api/client';
+import { Order } from '../types';
+
+const STATUS_STYLES: Record<string, string> = {
+  pending: 'bg-amber-100 text-amber-700',
+  processing: 'bg-blue-100 text-blue-700',
+  shipped: 'bg-purple-100 text-purple-700',
+  delivered: 'bg-emerald-100 text-emerald-700',
+};
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 
 export function Profile() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
-  if (!user) {
-    navigate('/auth');
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    api.get<Order[]>('/orders')
+      .then(setOrders)
+      .catch(() => null)
+      .finally(() => setOrdersLoading(false));
+  }, [user]);
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const mockOrders = [
-    { id: 'ORD-7392-XL', date: 'Oct 12, 2023', total: 325.00, status: 'Delivered', items: 3 },
-    { id: 'ORD-8941-AB', date: 'Sep 28, 2023', total: 145.50, status: 'Delivered', items: 1 },
-    { id: 'ORD-9102-CZ', date: 'Sep 05, 2023', total: 890.00, status: 'Processing', items: 4 },
-  ];
+  if (!user) return null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -30,96 +48,117 @@ export function Profile() {
         <div className="w-full md:w-64 flex-shrink-0">
           <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
             <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xl font-bold mb-4">
-              {user.name.charAt(0)}
+              {user.name.charAt(0).toUpperCase()}
             </div>
             <h2 className="text-xl font-bold text-slate-800">{user.name}</h2>
             <p className="text-sm text-slate-500 mb-6">{user.email}</p>
 
             <nav className="space-y-1">
-              <a href="#" className="flex items-center space-x-3 px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold transition-colors">
+              <span className="flex items-center gap-3 px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold">
                 <Package className="w-4 h-4" />
-                <span>Order History</span>
-              </a>
-              <a href="#" className="flex items-center space-x-3 px-3 py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg text-sm font-bold transition-colors">
-                <Heart className="w-4 h-4" />
-                <span>Saved Items</span>
-              </a>
-              <a href="#" className="flex items-center space-x-3 px-3 py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg text-sm font-bold transition-colors">
-                <MapPin className="w-4 h-4" />
-                <span>Addresses</span>
-              </a>
-              <a href="#" className="flex items-center space-x-3 px-3 py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg text-sm font-bold transition-colors">
-                <CreditCard className="w-4 h-4" />
-                <span>Payment Methods</span>
-              </a>
-              <a href="#" className="flex items-center space-x-3 px-3 py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg text-sm font-bold transition-colors">
-                <Settings className="w-4 h-4" />
-                <span>Account Settings</span>
-              </a>
+                Order History
+              </span>
+              {[
+                { icon: Heart, label: 'Saved Items' },
+                { icon: MapPin, label: 'Addresses' },
+                { icon: CreditCard, label: 'Payment Methods' },
+                { icon: Settings, label: 'Account Settings' },
+              ].map(({ icon: Icon, label }) => (
+                <button key={label} className="w-full flex items-center gap-3 px-3 py-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg text-sm font-bold transition-colors">
+                  <Icon className="w-4 h-4" />
+                  {label}
+                </button>
+              ))}
             </nav>
 
             <div className="border-t border-slate-100 mt-6 pt-6">
-              <button onClick={handleLogout} className="flex items-center space-x-3 px-3 py-2 text-slate-400 hover:text-red-500 w-full rounded-lg text-sm font-bold transition-colors">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-red-500 w-full rounded-lg text-sm font-bold transition-colors"
+              >
                 <LogOut className="w-4 h-4" />
-                <span>Log Out</span>
+                Log Out
               </button>
             </div>
           </div>
         </div>
 
-        {/* Content */}
+        {/* Orders */}
         <div className="flex-1">
           <h1 className="text-3xl font-light text-slate-800 tracking-tight mb-8">My Orders</h1>
-          
-          <div className="space-y-6">
-            {mockOrders.map((order) => (
-              <div key={order.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap gap-4 justify-between items-center">
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Order Placed</p>
-                    <p className="text-sm text-slate-700 font-medium">{order.date}</p>
+
+          {ordersLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="bg-white rounded-2xl border border-slate-100 h-28 animate-pulse" />
+              ))}
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
+              <Package className="w-10 h-10 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500 font-medium mb-1">No orders yet</p>
+              <p className="text-sm text-slate-400">Your order history will show up here once you make a purchase.</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {orders.map(order => (
+                <div key={order.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                  <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap gap-4 justify-between items-center">
+                    <div>
+                      <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Date</p>
+                      <p className="text-sm text-slate-700 font-medium">{formatDate(order.createdAt)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Total</p>
+                      <p className="text-sm font-mono font-bold text-indigo-600">${order.total.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Order #</p>
+                      <p className="text-sm font-mono text-slate-700">{order.id}</p>
+                    </div>
+                    <div>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${STATUS_STYLES[order.status] || 'bg-slate-100 text-slate-600'}`}>
+                        {order.status}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Total</p>
-                    <p className="text-sm font-mono font-bold text-indigo-600">${order.total.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Order #</p>
-                    <p className="text-sm font-mono text-slate-700">{order.id}</p>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                      order.status === 'Delivered' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                    }`}>
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6 flex justify-between items-center">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex -space-x-2">
-                      {[...Array(Math.min(3, order.items))].map((_, i) => (
-                        <div key={i} className="w-12 h-12 rounded-lg bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center">
-                          <Package className="w-5 h-5 text-slate-400" />
-                        </div>
-                      ))}
-                      {order.items > 3 && (
-                        <div className="w-12 h-12 rounded-lg bg-slate-50 border-2 border-white shadow-sm flex items-center justify-center text-xs font-bold text-slate-500">
-                          +{order.items - 3}
-                        </div>
+
+                  <div className="p-6 flex justify-between items-center">
+                    <p className="text-sm text-slate-500">
+                      {order.itemCount} {order.itemCount === 1 ? 'item' : 'items'}
+                    </p>
+                    <button
+                      onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+                      className="flex items-center gap-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      {expandedOrder === order.id ? (
+                        <><ChevronUp className="w-3 h-3" /> Hide Details</>
+                      ) : (
+                        <><ChevronDown className="w-3 h-3" /> View Details</>
                       )}
-                    </div>
-                    <div className="text-sm text-slate-500">
-                      {order.items} {order.items === 1 ? 'item' : 'items'}
-                    </div>
+                    </button>
                   </div>
-                  <button className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors">
-                    View Details
-                  </button>
+
+                  {expandedOrder === order.id && order.items && (
+                    <div className="px-6 pb-6 border-t border-slate-50 pt-4">
+                      <div className="space-y-3">
+                        {order.items.map((item, idx) => (
+                          <div key={idx} className="flex justify-between text-sm">
+                            <span className="text-slate-700">{item.name} <span className="text-slate-400">× {item.quantity}</span></span>
+                            <span className="font-mono text-slate-600">${(item.price * item.quantity).toFixed(2)}</span>
+                          </div>
+                        ))}
+                        <div className="border-t border-slate-100 pt-3 flex justify-between text-xs text-slate-400">
+                          <span>Shipping</span>
+                          <span className="font-mono">${order.shipping.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ export function Story() {
       <div className="max-w-3xl mx-auto px-4 py-24">
         <div className="prose prose-slate prose-lg max-w-none">
           <p className="text-xl text-slate-600 leading-relaxed mb-12 text-center font-medium">
-            Founded in 2024, EQUIS was born out of a desire to create furniture and home goods that balance aesthetic beauty with everyday functionality.
+            Founded in 2024, SuperMart was born out of a desire to create furniture and home goods that balance aesthetic beauty with everyday functionality.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
